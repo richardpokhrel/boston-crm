@@ -48,29 +48,6 @@ const getLeads = async (req, res, next) => {
   }
 }
 
-// GET /api/leads/:id
-const getLeadById = async (req, res, next) => {
-  try {
-    const lead = await Lead.findById(req.params.id)
-      .populate('assignedCounsellor', 'fullName email phone')
-      .populate('createdBy', 'fullName')
-
-    if (!lead) throw ApiError.notFound('Lead not found')
-
-    // Counsellors can only view their own leads
-    if (
-      req.user.role === 'counsellor' &&
-      lead.assignedCounsellor?._id.toString() !== req.user._id.toString()
-    ) {
-      throw ApiError.forbidden('You do not have access to this lead')
-    }
-
-    return ApiResponse.success(res, { lead })
-  } catch (err) {
-    next(err)
-  }
-}
-
 // POST /api/leads
 const createLead = async (req, res, next) => {
   try {
@@ -513,7 +490,7 @@ const bulkAssignLeads = async (req, res, next) => {
 
 module.exports = {
   getLeads,
-  getLeadById,
+  
   createLead,
   updateLead,
   updateLeadStatus,

@@ -86,10 +86,10 @@ export default function CreateLeadPage() {
             </Button>
             <Button type="button" variant="secondary" onClick={() => navigate('/leads')}>
               Cancel
-            </Button>
-          </div>
+            </Button>         </div>
         </form>
       </Card>
+      
     </div>
   )
 }

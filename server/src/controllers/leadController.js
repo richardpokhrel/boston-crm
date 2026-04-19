@@ -48,6 +48,22 @@ const getLeads = async (req, res, next) => {
   }
 }
 
+// GET /api/leads/:id
+const getLeadById = async (req, res, next) => {
+  try {
+    const lead = await Lead.findById(req.params.id)
+      .populate('assignedCounsellor', 'fullName email')
+      .populate('createdBy', 'fullName')
+      .lean()
+    
+    if (!lead) throw ApiError.notFound('Lead not found')
+    
+    return ApiResponse.success(res, { lead })
+  } catch (err) {
+    next(err)
+  }
+}
+
 // POST /api/leads
 const createLead = async (req, res, next) => {
   try {
@@ -411,22 +427,6 @@ const importLeadsFromCsv = async (req, res, next) => {
       }
     }
 
-    await ActivityLog.create({
-      actor: req.user._id,
-      actorRole: req.user.role,
-      action: 'leads.bulk_imported',
-      entityType: 'lead',
-      description: `Bulk imported ${imported.length} leads via CSV`,
-      metadata: {
-        totalRows: records.length,
-        importedCount: imported.length,
-        duplicateCount: duplicates.length,
-        errorCount: errors.length,
-        assignmentStrategy,
-      },
-      ipAddress: req.ip,
-    })
-
     return ApiResponse.success(res, {
       imported: imported.length,
       duplicates,
@@ -488,9 +488,56 @@ const bulkAssignLeads = async (req, res, next) => {
   }
 }
 
+// POST /api/leads/:id/contact-attempt - Add a contact attempt with notes
+const addContactAttempt = async (req, res, next) => {
+  try {
+    const { notes, contactStatus, notificationFlag } = req.body
+    const lead = await Lead.findById(req.params.id)
+
+    if (!lead) throw ApiError.notFound('Lead not found')
+    if (!notes || notes.trim() === '') throw ApiError.badRequest('Notes are required')
+    if (!contactStatus) throw ApiError.badRequest('Contact status is required')
+
+    // Calculate attempt number
+    const attemptNumber = (lead.contactAttempts?.length || 0) + 1
+    if (attemptNumber > 7) throw ApiError.badRequest('Maximum 7 contact attempts allowed')
+
+    // Add contact attempt
+    const contactAttempt = {
+      attemptNumber,
+      notes: notes.trim(),
+      contactStatus,
+      notificationFlag: !!notificationFlag,
+      createdBy: req.user._id,
+    }
+
+    lead.contactAttempts.push(contactAttempt)
+    lead.attemptCount = attemptNumber
+    lead.lastAttemptAt = new Date()
+
+    await lead.save()
+    await lead.populate('contactAttempts.createdBy', 'fullName')
+
+    await ActivityLog.create({
+      actor: req.user._id,
+      actorRole: req.user.role,
+      action: 'lead.contact_attempt_added',
+      entityType: 'lead',
+      entityId: lead._id,
+      entityLabel: lead.fullName,
+      afterState: { contactAttempt, attemptNumber },
+      ipAddress: req.ip,
+    })
+
+    return ApiResponse.success(res, { lead }, `Contact attempt ${attemptNumber} recorded`)
+  } catch (err) {
+    next(err)
+  }
+}
+
 module.exports = {
   getLeads,
-  
+  getLeadById,
   createLead,
   updateLead,
   updateLeadStatus,
@@ -501,4 +548,5 @@ module.exports = {
   getCounsellors,
   importLeadsFromCsv,
   bulkAssignLeads,
+  addContactAttempt,
 }

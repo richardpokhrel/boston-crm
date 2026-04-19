@@ -1,6 +1,11 @@
 import { clsx } from 'clsx'
 import { Loader2 } from 'lucide-react'
 import { forwardRef } from 'react'
+export { default as ContactAttemptDialog } from './ContactAttemptDialog'
+export { default as ContactAttemptsList } from './ContactAttemptsList'
+export { default as DocumentUploadDialog } from './DocumentUploadDialog'
+export { default as DocumentsList } from './DocumentsList'
+export { default as MessageThread } from './MessageThread'
 
 // ── Button ────────────────────────────────────────────────────────────────
 export const Button = ({
@@ -46,10 +51,10 @@ export const Input = forwardRef(({ label, error, className = '', ...props }, ref
 Input.displayName = 'Input'
 
 // ── Select ────────────────────────────────────────────────────────────────
-export const Select = ({ label, error, options = [], className = '', ...props }) => (
+export const Select = forwardRef(({ label, error, options = [], className = '', ...props }, ref) => (
   <div className="w-full">
     {label && <label className="label">{label}</label>}
-    <select className={clsx('input bg-white', error && 'border-red-400', className)} {...props}>
+    <select ref={ref} className={clsx('input bg-white', error && 'border-red-400', className)} {...props}>
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>
           {opt.label}
@@ -58,7 +63,8 @@ export const Select = ({ label, error, options = [], className = '', ...props })
     </select>
     {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
   </div>
-)
+))
+Select.displayName = 'Select'
 
 // ── Badge ─────────────────────────────────────────────────────────────────
 const badgeColors = {

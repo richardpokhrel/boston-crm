@@ -6,10 +6,13 @@ export const leadsApi = {
   create: (data) => api.post('/leads', data),
   update: (id, data) => api.patch(`/leads/${id}`, data),
   updateStatus: (id, data) => api.patch(`/leads/${id}/status`, data),
+  addContactAttempt: (id, data) => api.post(`/leads/${id}/contact-attempt`, data),
   delete: (id) => api.delete(`/leads/${id}`),
   
   // Admin endpoints
   getCounsellors: () => api.get('/leads/admin/counsellors'),
+
+  //
   importCsv: (file, assignmentStrategy, assignedCounsellor) => {
     const formData = new FormData()
     formData.append('file', file)
@@ -21,6 +24,8 @@ export const leadsApi = {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
   },
+
+  //
   bulkAssign: (leadIds, assignmentStrategy, assignedCounsellor) =>
     api.post('/leads/bulk-assign', { leadIds, assignmentStrategy, assignedCounsellor }),
   adminUpdateLead: (id, data) => api.patch(`/leads/${id}/admin`, data),

@@ -3,7 +3,7 @@ const multer = require('multer')
 const {
   getLeads, getLeadById, createLead, updateLead, updateLeadStatus, deleteLead,
   adminUpdateLead, adminReassignLead, adminUpdateLeadStatus,
-  getCounsellors, importLeadsFromCsv, bulkAssignLeads,
+  getCounsellors, importLeadsFromCsv, bulkAssignLeads, addContactAttempt,
 } = require('../controllers/leadController')
 const { protect, authorize, adminOnly } = require('../middleware/auth')
 const { validate } = require('../middleware/validate')
@@ -23,6 +23,7 @@ router.post('/bulk-assign', adminOnly, bulkAssignLeads)
 router.get('/', getLeads)
 router.post('/', validate(createLeadSchema), createLead)
 router.get('/:id', getLeadById)
+router.post('/:id/contact-attempt', addContactAttempt)
 router.patch('/:id', validate(updateLeadSchema), updateLead)
 router.patch('/:id/status', validate(updateStatusSchema), updateLeadStatus)
 router.patch('/:id/admin', adminOnly, adminUpdateLead)

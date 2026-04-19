@@ -16,6 +16,7 @@ const COOKIE_OPTS = {
   sameSite: 'strict',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 }
+const bcrypt = require('bcryptjs')
 
 // POST /api/auth/register  (admin only in production)
 const register = async (req, res, next) => {
@@ -52,7 +53,7 @@ const login = async (req, res, next) => {
     if (!user.isActive) throw ApiError.unauthorized('Account deactivated')
     if (user.isLocked()) throw ApiError.unauthorized('Account locked. Try again later.')
 
-    const isMatch = await user.comparePassword(password)
+    const isMatch =await bcrypt.compare(password, user.password)
     if (!isMatch) {
       // Increment failed count
       const failed = user.failedLoginCount + 1
@@ -79,8 +80,15 @@ const login = async (req, res, next) => {
     // Send refresh token as httpOnly cookie
     res.cookie('refresh_token', refreshToken, COOKIE_OPTS)
 
+    // Determine redirect based on role
+    let redirectTo = '/dashboard'
+    if (user.role === 'student') {
+      redirectTo = '/student/portal'
+    }
+
     return ApiResponse.success(res, {
       accessToken,
+      redirectTo,
       user: user.toSafeObject(),
     }, 'Login successful')
   } catch (err) {

@@ -14,7 +14,6 @@ const LEAD_STATUSES = [
 
 const leadSchema = new mongoose.Schema(
   {
-    id : { type: String, unique: true, required: true },
     fullName: { type: String, required: true, trim: true },
     email: { type: String, lowercase: true, trim: true },
     phone: { type: String, required: true, trim: true },
@@ -44,6 +43,20 @@ const leadSchema = new mongoose.Schema(
     slaDueAt: { type: Date },
     enrolledAt: { type: Date },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    contactAttempts: [
+      {
+        attemptNumber: { type: Number, required: true },
+        notes: { type: String, required: true },
+        contactStatus: {
+          type: String,
+          enum: ['contacted', 'interested', 'docs_received', 'initial_docs_received', 'new_contacted'],
+          required: true,
+        },
+        notificationFlag: { type: Boolean, default: false },
+        createdAt: { type: Date, default: Date.now },
+        createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      },
+    ],
   },
   { timestamps: true }
 )

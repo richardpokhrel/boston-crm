@@ -7,7 +7,10 @@ import LoginPage from './pages/auth/LoginPage'
 import DashboardPage from './pages/dashboard/DashboardPage'
 import LeadsPage from './pages/leads/LeadsPage'
 import LeadDetailPage from './pages/leads/LeadDetailPage'
+import LeadsInterested from './pages/leads/LeadsInterested'
 import CreateLeadPage from './pages/leads/CreateLeadPage'
+import StudentPortal from './pages/student/StudentPortal'
+import AdminDocumentReview from './pages/admin/AdminDocumentReview'
 
 // Placeholder pages — swap with real implementations
 const Placeholder = ({ title }) => (
@@ -26,12 +29,23 @@ export default function App() {
         {/* Public */}
         <Route path="/login" element={<LoginPage />} />
 
+        {/* Student Portal */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/student/portal" element={<StudentPortal />} />
+        </Route>
+
+        {/* Admin Document Review */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin/documents" element={<AdminDocumentReview />} />
+        </Route>
+
         {/* Protected — all staff */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/leads" element={<LeadsPage />} />
             <Route path="/leads/new" element={<CreateLeadPage />} />
+            <Route path="/leads/:id/interested" element={<LeadsInterested />} />
             <Route path="/leads/:id" element={<LeadDetailPage />} />
             <Route path="/tasks" element={<Placeholder title="Tasks" />} />
             <Route path="/reports" element={<Placeholder title="Reports" />} />

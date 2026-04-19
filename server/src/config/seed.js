@@ -32,6 +32,26 @@ const seed = async () => {
       createdBy: admin._id,
     })
 
+    const student1 = await User.create({
+      fullName: 'Meera Lama',
+      email: 'meera@example.com',
+      password: 'Student@123!',
+      role: 'student',
+      phone: '+9779800000001',
+      isActive: true,
+      createdBy: admin._id,
+    })
+
+    const student2 = await User.create({
+      fullName: 'Kolmal Oli',
+      email: 'kolmal@example.com',
+      password: 'Student@123!',
+      role: 'student',
+      phone: '+9779800000001',
+      isActive: true,
+      createdBy: admin._id,
+    })
+
     const counsellor2 = await User.create({
       fullName: 'Ram Thapa',
       email: 'ram@bostoncrm.com',
@@ -142,11 +162,16 @@ const seed = async () => {
 
     console.log('\n🎉  Seed complete!\n')
     console.log('─────────────────────────────────────')
+    console.log('📋 Admin & Staff Accounts:')
     console.log('  admin@bostoncrm.com       Admin@123!')
     console.log('  sarah@bostoncrm.com       Staff@123!')
     console.log('  ram@bostoncrm.com         Staff@123!')
     console.log('  docs@bostoncrm.com        Staff@123!')
     console.log('  appteam@bostoncrm.com     Staff@123!')
+    console.log('─────────────────────────────────────')
+    console.log('👤 Student Accounts:')
+    console.log('  meera@example.com         Student@123!')
+    console.log('  kolmal@example.com        Student@123!')
     console.log('─────────────────────────────────────')
 
     process.exit(0)

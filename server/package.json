@@ -8,7 +8,8 @@
     "test": "jest --runInBand --forceExit --detectOpenHandles",
     "test:coverage": "jest --coverage",
     "lint": "eslint src",
-    "seed": "node src/config/seed.js"
+    "seed": "node src/config/seed.js",
+    "migrate": "node src/config/migrate.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -26,7 +27,8 @@
     "joi": "^17.12.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.2",
-    "morgan": "^1.10.0",``
+    "morgan": "^1.10.0",
+    "multer": "^2.1.1",
     "redis": "^5.11.0",
     "socket.io": "^4.8.3",
     "uuid": "^9.0.1",

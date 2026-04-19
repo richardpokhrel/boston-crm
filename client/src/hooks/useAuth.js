@@ -15,6 +15,7 @@ export const useAuth = () => {
       console.log('Login response:', response)
       const userData = response.data?.data?.user || response.data?.user
       const token = response.data?.data?.accessToken || response.data?.accessToken
+      const redirectTo = response.data?.data?.redirectTo || response.data?.redirectTo
       
       if (!userData || !token) {
         toast.error('Invalid response from server')
@@ -24,7 +25,9 @@ export const useAuth = () => {
 
       login(userData, token)
       toast.success(`Welcome back, ${userData.fullName?.split(' ')[0] || 'User'}!`)
-      navigate('/dashboard')
+      // Use redirectTo from response if available, otherwise default based on role
+      const destination = redirectTo || (userData.role === 'student' ? '/student/portal' : '/dashboard')
+      navigate(destination)
     },
     onError: (err) => {
       console.error('Login error:', err)

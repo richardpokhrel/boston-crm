@@ -1,5 +1,4 @@
 # Boston CRM — MERN Stack Boilerplate
-https://privatebin.net/?caceb4a8b6751fa9#DAWmL5VderuMU3D9VjBtipcNeRk9sWWmDULt2bSr5Kxo
 Full-stack MERN application boilerplate for the Boston CRM education consultancy platform.
 
 ## Tech Stack
